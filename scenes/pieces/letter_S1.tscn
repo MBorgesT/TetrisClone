@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/block.tscn" type="PackedScene" id=1]
+
+
+
+[node name="letter_S1" type="Node2D"]
+
+[node name="block1" parent="." instance=ExtResource( 1 )]
+position = Vector2( 17.5, 17.5 )
+
+[node name="block2" parent="." instance=ExtResource( 1 )]
+position = Vector2( 52.5, 17.5 )
+
+[node name="block3" parent="." instance=ExtResource( 1 )]
+position = Vector2( 52.5, 52.5 )
+
+[node name="block4" parent="." instance=ExtResource( 1 )]
+position = Vector2( 87.5, 52.5 )
