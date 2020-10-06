@@ -1,96 +1,62 @@
 extends Node
 
-var piece_type
-var color
+var positions
+var qt_positions
+var current_position
+var color setget , get_color
 var matrix setget , get_matrix
-var top_left_coord setget set_coord, get_coord
+var coord setget set_coord, get_coord # top left pixel/coordinate
 
 func _init():
 	randomize()
 	
 	color = resources.get_random_color()
-	top_left_coord = [1, 3]
-	set_random_piece()
-
-func set_random_piece():
-	var aux = randi() % 7
-	piece_type = aux
 	
-	if aux == 0:
-		matrix = [
-			[null, null, null, null],
-			[null, null, null, null],
-			[color, color, color, color],
-			[null, null, null, null]
-		]
-	elif aux == 1:
-		matrix = [
-			[null, null, null, null],
-			[color, null, null, null],
-			[color, color, color, null],
-			[null, null, null, null]
-		]
-	elif aux == 2:
-		matrix = [
-			[null, null, null, null],
-			[null, null, color, null],
-			[color, color, color, null],
-			[null, null, null, null]
-		]
-	elif aux == 3:
-		matrix = [
-			[null, null, null, null],
-			[color, color, null, null],
-			[null, color, color, null],
-			[null, null, null, null]
-		]
-	elif aux == 4:
-		matrix = [
-			[null, null, null, null],
-			[null, color, color, null],
-			[color, color, null, null],
-			[null, null, null, null]
-		]
-	elif aux == 5:
-		matrix = [
-			[null, null, null, null],
-			[null, color, null, null],
-			[color, color, color, null],
-			[null, null, null, null]
-		]
-	elif aux == 6:
-		matrix = [
-			[null, null, null, null],
-			[null, color, color, null],
-			[null, color, color, null],
-			[null, null, null, null]
-		]
+	load_options()
+	matrix = positions[0]
+	current_position = 0
+	
+	coord = [1, 3]
+
+func load_options():
+	pass
 
 func set_coord(value):
-	top_left_coord = value
+	coord = value
 
 func get_coord():
-	return top_left_coord
+	return coord
 
 func get_matrix():
 	return matrix
-	
+
+func get_next_position(direction):
+	if direction == main.LEFT:
+		return positions[(current_position + 1) % qt_positions]
+	elif direction == main.RIGHT:
+		var next_pos = current_position - 1
+		if next_pos < 0: next_pos = qt_positions - 1
+		return positions[next_pos]
+
+func move_x_axis(direction):
+	if direction == main.LEFT:
+		coord[1] = max(0, coord[1] - 1)
+	elif direction == main.RIGHT:
+		coord[1] = min(main.FIELD_WIDTH - matrix[0].size(), coord[1] + 1)
+
+func move_down():
+	coord[0] += 1
 
 func rotate(direction):
-	var new_matrix = [
-			[null, null, null, null],
-			[null, null, null, null],
-			[null, null, null, null],
-			[null, null, null, null]
-	]
-	
+	# rotation
 	if direction == main.LEFT:
-		for i in matrix.size():
-			for j in matrix[i].size():
-				new_matrix[(matrix.size()-1)-j][i] = matrix[i][j]
+		current_position = (current_position + 1) % qt_positions
+		matrix = positions[current_position]
 	elif direction == main.RIGHT:
-		for i in matrix.size():
-			for j in matrix[i].size():
-				new_matrix[j][i] = matrix[i][j]
-	
-	matrix = new_matrix
+		current_position = current_position - 1
+		if current_position < 0:
+			current_position = qt_positions - 1
+		matrix = positions[current_position]
+
+func get_color():
+	return color
